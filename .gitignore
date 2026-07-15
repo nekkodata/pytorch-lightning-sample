@@ -3,6 +3,12 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+# ML data / training artifacts
+/data/
+lightning_logs/
+checkpoints/
+*.ckpt
+
 # C extensions
 *.so
 

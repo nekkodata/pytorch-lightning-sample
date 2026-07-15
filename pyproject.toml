@@ -1,0 +1,21 @@
+[project]
+name = "pytorch-lightning-sample"
+version = "0.1.0"
+description = "PyTorch Lightning sample: EfficientNet-B0 + Focal Loss on long-tailed CIFAR-10 (CPU only)"
+requires-python = ">=3.12"
+dependencies = [
+    "numpy>=2.5.1",
+    "pytorch-lightning>=2.6.5",
+    "torch>=2.0",
+    "torchmetrics>=1.9.0",
+    "torchvision>=0.15",
+]
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cpu" }]
+torchvision = [{ index = "pytorch-cpu" }]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
