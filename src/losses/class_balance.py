@@ -4,9 +4,9 @@ import torch
 
 
 def compute_class_balanced_alpha(class_counts: Sequence[int], beta: float = 0.999) -> torch.Tensor:
-    """Class-balanced weights from the effective number of samples (Cui et al., 2019).
+    """有効サンプル数(Cui et al., 2019)に基づくクラスバランス重み。
 
-    Currently unused. Usage (not wired into training):
+    現状どこからも呼ばれていない未使用ユーティリティ。使用例(学習には未組み込み):
         targets = [datamodule.train_set.dataset.targets[i] for i in datamodule.train_set.indices]
         class_counts = np.bincount(targets, minlength=num_classes)
         weights = compute_class_balanced_alpha(class_counts.tolist())  # shape: (num_classes,)

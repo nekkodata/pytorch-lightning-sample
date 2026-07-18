@@ -9,9 +9,9 @@ def make_long_tailed_indices(
     imbalance_factor: float = 0.1,
     seed: int = 42,
 ) -> List[int]:
-    """Return indices (relative to `targets`) forming an exponentially decaying,
-    long-tailed class distribution. `imbalance_factor` is the ratio between the
-    smallest and largest resulting class size (e.g. 0.1 == 10x imbalance)."""
+    """`targets`に対する相対インデックスのうち、指数的に減衰するlong-tailedな
+    クラス分布を構成するものを返す。`imbalance_factor`は、結果として得られる
+    クラスサイズの最小値と最大値の比率(例: 0.1 == 10倍の不均衡)。"""
     targets_arr = np.asarray(targets)
     rng = np.random.default_rng(seed)
     class_counts = np.bincount(targets_arr, minlength=num_classes)
