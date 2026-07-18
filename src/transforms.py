@@ -111,8 +111,10 @@ def build_train_transforms(
             transforms.RandomApply([transforms.GaussianBlur(kernel_size=3, sigma=(0.1, 2.0))], p=0.2),
             preprocess,
             transforms.RandomErasing(p=0.3, scale=(0.02, 0.15)),
+            RandomCutPaste(p=0.3, scale=(0.02, 0.15), ratio=(0.3, 3.3)),
             # preprocess で正規化済み(値域は [0, 1] ではない)のため clip=False
             v2.RandomApply([v2.GaussianNoise(mean=0.0, sigma=0.05, clip=False)], p=0.2),
+            RandomFrequencyJitter(p=0.2, high_freq_scale_range=(0.7, 1.3), cutoff=0.3),
         ]
     )
 
