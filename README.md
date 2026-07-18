@@ -62,7 +62,9 @@ src/
 | `RandomApply([GaussianBlur(kernel_size=3, sigma=(0.1, 2.0))], p=0.2)` | ランダムぼかし |
 | EfficientNet 標準前処理 | リサイズ/クロップ/正規化 |
 | `RandomErasing(p=0.3, scale=(0.02, 0.15))` | ランダム矩形マスク(Cutout的効果) |
+| `RandomCutPaste(p=0.3, scale=(0.02, 0.15), ratio=(0.3, 3.3))` | パッチのコピー&ペーストで局所テクスチャ不連続を模した拡張。産業用サーフェス欠陥検出向けの [CutPaste](https://arxiv.org/abs/2104.04015)(Li et al., CVPR 2021)系手法。限定データでの有効性は2025年の査読付き論文([Mohammadzadeh et al., 2025, DOI:10.1002/amp2.70011](https://doi.org/10.1002/amp2.70011))でも確認されている。※元手法は自己教師あり異常検知向けであり、本リポジトリでは教師あり分類向けの正則化として転用している |
 | `RandomApply([v2.GaussianNoise(sigma=0.05, clip=False)], p=0.2)` | ランダムガウシアンノイズ(正規化後の値域のため `clip=False`) |
+| `RandomFrequencyJitter(p=0.2, high_freq_scale_range=(0.7, 1.3), cutoff=0.3)` | FFTで振幅・位相に分解し、位相(構造情報)を保持したまま高周波成分の振幅のみをランダムスケール。2025年のPCB欠陥検出論文群([PCB-FS, *Symmetry* 2025, DOI:10.3390/sym17122020](https://doi.org/10.3390/sym17122020); [CM-UNetv2, *Sensors* 2025, DOI:10.3390/s25164919](https://doi.org/10.3390/s25164919))が強調する「高周波成分が微小欠陥検出の鍵」という着想を、ネットワークモジュールではなく入力拡張に転用したもの |
 
 ### 学習フロー(`src/train.py`)
 
