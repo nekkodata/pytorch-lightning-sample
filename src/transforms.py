@@ -57,6 +57,47 @@ class RandomCutPaste(torch.nn.Module):
         return img
 
 
+class RandomFrequencyJitter(torch.nn.Module):
+    """PCB欠陥検出文献(PCB-FS: Symmetry 2025, DOI:10.3390/sym17122020;
+    CM-UNetv2: Sensors 2025, DOI:10.3390/s25164919 等)における
+    「高周波成分が微小欠陥検出の鍵である」という着想を、
+    ネットワーク内モジュールではなく入力画像への周波数領域augmentationへ転用したもの。
+    位相(構造・エッジ情報)は保持したまま、高周波成分の振幅のみをランダムスケールする。
+    """
+
+    def __init__(
+        self,
+        p: float = 0.2,
+        high_freq_scale_range: tuple[float, float] = (0.7, 1.3),
+        cutoff: float = 0.3,
+    ) -> None:
+        super().__init__()
+        self.p = p
+        self.high_freq_scale_range = high_freq_scale_range
+        self.cutoff = cutoff
+
+    def forward(self, img: torch.Tensor) -> torch.Tensor:
+        if torch.rand(1).item() >= self.p:
+            return img
+
+        _, height, width = img.shape
+        spectrum = torch.fft.rfft2(img)
+        amplitude = spectrum.abs()
+        phase = torch.angle(spectrum)
+
+        freq_h = torch.fft.fftfreq(height, device=img.device).abs()
+        freq_w = torch.fft.rfftfreq(width, device=img.device).abs()
+        radial = torch.sqrt(freq_h[:, None] ** 2 + freq_w[None, :] ** 2)
+        radial = radial / radial.max()
+        mask = torch.clamp((radial - self.cutoff) / (1.0 - self.cutoff + 1e-8), min=0.0, max=1.0)
+
+        scale = torch.empty(1).uniform_(*self.high_freq_scale_range).item()
+        amplitude = amplitude * (1.0 + mask * (scale - 1.0))
+
+        spectrum = torch.polar(amplitude, phase)
+        return torch.fft.irfft2(spectrum, s=(height, width))
+
+
 def build_train_transforms(
     weights: EfficientNet_B0_Weights = EfficientNet_B0_Weights.DEFAULT,
     img_size: Optional[int] = None,
